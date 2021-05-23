@@ -1,25 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { networkInterfaces } from 'os';
+import React, { Fragment, useState } from 'react';
 
-function App() {
+type FormElement = React.FormEvent<HTMLFormElement>
+interface iTask{
+  name: string,
+  done: boolean,
+}
+
+
+function App(): JSX.Element {
+  const [newTask, setNewTask] = useState<string>('');
+  const [tasks, setTasks] = useState<iTask[]>([]);
+
+  const handleSubmit = (e: FormElement) =>{
+    e.preventDefault();
+    console.log('Enviando: ', newTask);
+    addTask(newTask);
+    setNewTask('');
+  }
+  const addTask = (name : string) =>{
+    const newTask: iTask[] = [...tasks, {name, done: false} ] 
+    setTasks(newTask);
+    console.log('Tasks: ', tasks);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <form onSubmit={handleSubmit}>
+        <input type='text' onChange={e => setNewTask(e.target.value)} value={newTask}/>
+        <button>Save</button>
+      </form>
+      {
+        tasks.map((t: iTask, i: number) => <h1 key={i}>{t.name}</h1>)
+      }
+    </Fragment>
   );
 }
 
